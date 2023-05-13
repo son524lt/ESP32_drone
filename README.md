@@ -32,5 +32,3 @@ The project utilizes various libraries and modules. Here's an overview of the pr
     - BTremote.h
 - platformio.ini
 - README.md
-
-Feel free to modify the folder structure based on your specific project requirements.
