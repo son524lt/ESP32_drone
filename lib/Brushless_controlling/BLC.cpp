@@ -16,5 +16,6 @@ void BL_ESC::Run() {
 }
 
 void BL_ESC::Stop() {
+    speed = 0;
     ESC.writeMicroseconds(1000);
 }

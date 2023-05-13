@@ -11,6 +11,7 @@
 #include <WebServer.h>
 #include <BluetoothSerial.h>
 #include <ArduinoJson.h>
+#include <BTremote.h>
 
 #define X 0
 #define Y 1
