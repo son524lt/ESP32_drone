@@ -13,7 +13,9 @@ void axisHandler::getBaseRollPitch(double &roll, double &pitch) {
         sum[1]+=ay;
         sum[2]+=az;
     }
-    
+    ax=sum[0]/100;ay=sum[1]/100;az=sum[2]/100;
+    roll = atan2(ay, az) * 180.0 / M_PI;
+    pitch = atan2(-ax, sqrt(ay * ay + az * az)) * 180.0 / M_PI;
 }
 
 void axisHandler::calculateRollPitch(double &roll, double &pitch) {
