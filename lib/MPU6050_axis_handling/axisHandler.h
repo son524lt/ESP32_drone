@@ -9,11 +9,11 @@
 class axisHandler
 {
 private:
-    MPU6050 &imu;
+    MPU6050 imu;
     int16_t ax, ay, az, gx, gy, gz;
     
 public:
-    axisHandler(MPU6050 &imu);
+    axisHandler();
     void getBaseRollPitch(double &roll, double &pitch);
     void calculateRollPitch(double &roll, double &pitch);
 };
