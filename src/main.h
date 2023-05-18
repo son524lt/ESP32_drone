@@ -2,25 +2,27 @@
 #define _MAIN_H_
 #include <Arduino.h>
 #include <BLC.h>
-#include <axisHandler.h>
 #include <PIDcontroller.h>
 #include <Wire.h>
 #include <MPU6050.h>
 #include <SimpleKalmanFilter.h>
-#include <Wifi.h>
-#include <WebServer.h>
-#include <BluetoothSerial.h>
-#include <ArduinoJson.h>
-#include <BTremote.h>
+#include <esp_wifi.h>
+#include <WiFi.h>
+#include <QuickEspNow.h>
 
 #define X 0
 #define Y 1
 #define Z 2
 
-#define FLe 33
-#define FRi 25
-#define BRi 26
-#define BLe 27
+#define FLe 19
+#define FRi 18
+#define BRi 32
+#define BLe 33
+
+#define accelScale 16384.0
+#define gyroScale 130.0
+
+#define alpha 0.9
 
 #endif
 

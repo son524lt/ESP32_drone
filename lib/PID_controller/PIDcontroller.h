@@ -13,5 +13,4 @@ public:
     void setLimit(unsigned lowerLimit, unsigned upperLimit);
 };
 
-
 #endif

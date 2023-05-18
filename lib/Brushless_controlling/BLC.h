@@ -11,7 +11,7 @@ public:
     unsigned int speed;
     BL_ESC(char pin_number);
     void Run();
-    void setSpeed(unsigned int speed);
+    void setSpeed(unsigned int speed, bool run=false);
     void Stop();
 };
 
