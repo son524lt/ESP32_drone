@@ -9,7 +9,7 @@ private:
 public:
     double output=0;
     PIDcontroller(double kP, double kI, double kD);
-    void calculateOutput(double error, uint8_t baseStage);
+    void calculateOutput(double error, uint8_t _baseStage);
     void setLimit(unsigned lowerLimit, unsigned upperLimit);
 };
 

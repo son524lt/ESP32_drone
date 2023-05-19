@@ -1,5 +1,6 @@
 #include <PIDcontroller.h>
 
+
 PIDcontroller::PIDcontroller(double _kP, double _kI, double _kD) {
     kP = _kP;
     kI = _kI;
@@ -11,7 +12,7 @@ void PIDcontroller::calculateOutput(double _error, uint8_t _baseStage) {
     P = error;
     I += error;
     D = error - last_error;
-    output = (kP*P + kI*I + kD*D)*_baseStage;
+    output = (kP*P + kI*I + kD*D)*_baseStage/2.0;
     if (output < lowerLimit) output = lowerLimit;
     if (output > upperLimit) output = upperLimit;
     last_error = error; 

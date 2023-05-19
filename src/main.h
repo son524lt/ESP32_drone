@@ -10,10 +10,6 @@
 #include <WiFi.h>
 #include <QuickEspNow.h>
 
-#define X 0
-#define Y 1
-#define Z 2
-
 #define FLe 19
 #define FRi 18
 #define BRi 32

@@ -3,10 +3,10 @@
 // WIFI MAC ADDRESS OF THE BOARD: 48:E7:29:C4:35:4C
 int receivedData[4];
 uint8_t senderMacAddress[] = {0x48, 0xE7, 0x29, 0xC4, 0x11, 0xD0};
-BL_ESC rFL(FLe);
-BL_ESC bFR(FRi);
-BL_ESC rBR(BRi);
-BL_ESC bBL(BLe);
+BL_ESC rFL(FLe,300);
+BL_ESC bFR(FRi,260);
+BL_ESC rBR(BRi,1300);
+BL_ESC bBL(BLe,280);
 
 bool running = false;
 uint16_t baseSpeed = 0;
@@ -16,8 +16,8 @@ float expectedRoll=0, expectedPitch=0, expectedYaw=0;
 MPU6050 imu;
 int16_t ax, ay, az;
 float gx, gy, gz, roll, pitch, yaw;
-PIDcontroller rollPID(10,0.0001,1);
-PIDcontroller pitchPID(10,0.0001,1);
+PIDcontroller rollPID(10,0,1);
+PIDcontroller pitchPID(10,0,1);
 PIDcontroller yawPID(0,0,0);
 SimpleKalmanFilter kf[5] = {
   SimpleKalmanFilter(2, 2, 1),
@@ -27,17 +27,28 @@ SimpleKalmanFilter kf[5] = {
   SimpleKalmanFilter(1, 1, 0.1)
 };
 
+SimpleKalmanFilter signals[4] = {
+  SimpleKalmanFilter(1, 1, 0.1),
+  SimpleKalmanFilter(1, 1, 0.1),
+  SimpleKalmanFilter(1, 1, 0.1),
+  SimpleKalmanFilter(1, 1, 0.1)
+};
+
 void dataReceived(uint8_t* address, uint8_t* data, uint8_t len, signed int rssi, bool broadcast) {
   receivedData[0]=int(data[0])-10;
+  receivedData[0] = (int)signals[0].updateEstimate(receivedData[0]);
   baseStage = receivedData[0];
   baseSpeed = receivedData[0] * 300;
   running = (baseSpeed > 0);
   receivedData[1]=int(data[1])-10;
+  receivedData[1] = (int)signals[1].updateEstimate(receivedData[1]);
   expectedYaw=receivedData[1];
   receivedData[2]=int(data[2])-10;
-  expectedRoll=receivedData[2]*5;
+  receivedData[2] = (int)signals[2].updateEstimate(receivedData[2]);
+  expectedPitch=receivedData[2]*5;
   receivedData[3]=int(data[3])-10;
-  expectedPitch=receivedData[3]*5;
+  receivedData[3] = (int)signals[3].updateEstimate(receivedData[3]);
+  expectedRoll=receivedData[3]*5;
 }
 
 void setup() {
@@ -92,10 +103,10 @@ void loop() {
   if (rollError<2&&rollError>-2) rollError=0;
   if (pitchError<2&&pitchError>-2) pitchError=0;
   if (yawError<0.5&&yawError>-0.5) yawError=0;
-  rollPID.calculateOutput(rollError,baseStage);
-  pitchPID.calculateOutput(pitchError,baseStage);
-  yawPID.calculateOutput(yawError,baseStage);
-  running = 0;
+  rollPID.calculateOutput(rollError, baseStage);
+  pitchPID.calculateOutput(pitchError, baseStage);
+  yawPID.calculateOutput(yawError, baseStage);
+  // running = 0;
   bBL.setSpeed(baseSpeed+yawPID.output-rollPID.output+pitchPID.output);
   bFR.setSpeed(baseSpeed+yawPID.output+rollPID.output-pitchPID.output);
   rBR.setSpeed(baseSpeed-yawPID.output+rollPID.output+pitchPID.output);
@@ -120,8 +131,16 @@ void loop() {
   Serial.print("\t");
   Serial.print(rFL.speed);
   Serial.print("\t");
+  Serial.print(rollPID.output);
+  Serial.print("\t");
+  Serial.print(pitchPID.output);
+  Serial.print("\t");
+  Serial.print(yawPID.output);
+  Serial.print("\t");
+  Serial.print(baseSpeed);
+  Serial.print("\t");
   Serial.println();
-  // if (running) {bBL.Run(); bFR.Run(); rBR.Run(); rFL.Run();} else {bBL.Stop(); bFR.Stop(); rBR.Stop(); rFL.Stop();}
-  delay(10);
+  if (running) {bBL.Run(); bFR.Run(); rBR.Run(); rFL.Run();} else {bBL.Stop(); bFR.Stop(); rBR.Stop(); rFL.Stop();}
+  delay(50);
   prev = current_time;
 }
