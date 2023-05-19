@@ -9,7 +9,8 @@ BL_ESC rBR(BRi);
 BL_ESC bBL(BLe);
 
 bool running = false;
-unsigned baseSpeed = 0;
+uint16_t baseSpeed = 0;
+uint8_t baseStage = 0;
 float rollError=0, pitchError=0, yawError=0;
 float expectedRoll=0, expectedPitch=0, expectedYaw=0;
 MPU6050 imu;
@@ -28,6 +29,7 @@ SimpleKalmanFilter kf[5] = {
 
 void dataReceived(uint8_t* address, uint8_t* data, uint8_t len, signed int rssi, bool broadcast) {
   receivedData[0]=int(data[0])-10;
+  baseStage = receivedData[0];
   baseSpeed = receivedData[0] * 300;
   running = (baseSpeed > 0);
   receivedData[1]=int(data[1])-10;
@@ -37,7 +39,6 @@ void dataReceived(uint8_t* address, uint8_t* data, uint8_t len, signed int rssi,
   receivedData[3]=int(data[3])-10;
   expectedPitch=receivedData[3]*5;
 }
-
 
 void setup() {
   pinMode(16,OUTPUT);
@@ -55,7 +56,7 @@ void setup() {
   imu.CalibrateGyro();
   // Setting up P2P Wifi connection
   WiFi.mode(WIFI_MODE_STA);
-  WiFi.disconnect (false, true);
+  WiFi.disconnect(false, true);
   quickEspNow.onDataRcvd(dataReceived);
   quickEspNow.begin();
   digitalWrite(16,HIGH);
@@ -84,31 +85,42 @@ void loop() {
   float pitch_gyro = gy*(current_time-prev)/1000000.0 + pitch;
   roll = alpha * roll_gyro + (1 - alpha) * roll_acc;
   pitch = alpha * pitch_gyro + (1 - alpha) * pitch_acc;
-  Serial.print(roll);
-  Serial.print("\t");
-  Serial.print(pitch);
-  Serial.print("\t");
-  Serial.print(gx);
-  Serial.print("\t");
-  Serial.print(gy);
-  Serial.print("\t");
-  Serial.print(gz);
-  Serial.print("\t");
-  Serial.println();
+  
   rollError = roll-expectedRoll;
   pitchError = pitch-expectedPitch;
   yawError = yaw-expectedYaw;
-  if (rollError<1&&rollError>-1) rollError=0;
-  if (pitchError<1&&pitchError>-1) pitchError=0;
-  if (yawError<1&&yawError>-1) yawError=0;
-  rollPID.calculateOutput(rollError);
-  pitchPID.calculateOutput(pitchError);
-  yawPID.calculateOutput(yawError);
+  if (rollError<2&&rollError>-2) rollError=0;
+  if (pitchError<2&&pitchError>-2) pitchError=0;
+  if (yawError<0.5&&yawError>-0.5) yawError=0;
+  rollPID.calculateOutput(rollError,baseStage);
+  pitchPID.calculateOutput(pitchError,baseStage);
+  yawPID.calculateOutput(yawError,baseStage);
   running = 0;
   bBL.setSpeed(baseSpeed+yawPID.output-rollPID.output+pitchPID.output);
   bFR.setSpeed(baseSpeed+yawPID.output+rollPID.output-pitchPID.output);
   rBR.setSpeed(baseSpeed-yawPID.output+rollPID.output+pitchPID.output);
   rFL.setSpeed(baseSpeed-yawPID.output-rollPID.output-pitchPID.output);
+  Serial.print(roll);
+  Serial.print("\t");
+  Serial.print(pitch);
+  Serial.print("\t");
+  Serial.print(yaw);
+  Serial.print("\t");
+  Serial.print(rollError);
+  Serial.print("\t");
+  Serial.print(pitchError);
+  Serial.print("\t");
+  Serial.print(yawError);
+  Serial.print("\t");
+  Serial.print(bBL.speed);
+  Serial.print("\t");
+  Serial.print(bFR.speed);
+  Serial.print("\t");
+  Serial.print(rBR.speed);
+  Serial.print("\t");
+  Serial.print(rFL.speed);
+  Serial.print("\t");
+  Serial.println();
   // if (running) {bBL.Run(); bFR.Run(); rBR.Run(); rFL.Run();} else {bBL.Stop(); bFR.Stop(); rBR.Stop(); rFL.Stop();}
   delay(10);
   prev = current_time;

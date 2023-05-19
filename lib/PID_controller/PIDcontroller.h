@@ -1,6 +1,6 @@
 #ifndef _PIDCONTROLLER_H_
 #define _PIDCONTROLLER_H_
-
+#include <Arduino.h>
 class PIDcontroller
 {
 private:
@@ -9,7 +9,7 @@ private:
 public:
     double output=0;
     PIDcontroller(double kP, double kI, double kD);
-    void calculateOutput(double error);
+    void calculateOutput(double error, uint8_t baseStage);
     void setLimit(unsigned lowerLimit, unsigned upperLimit);
 };
 
