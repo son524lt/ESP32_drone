@@ -6,7 +6,7 @@ uint8_t senderMacAddress[] = {0x48, 0xE7, 0x29, 0xC4, 0x11, 0xD0};
 BL_ESC rFL(FLe,300);
 BL_ESC bFR(FRi,260);
 BL_ESC rBR(BRi,1300);
-BL_ESC bBL(BLe,280);
+BL_ESC bBL(BLe,300);
 
 bool running = false;
 uint16_t baseSpeed = 0;
@@ -16,8 +16,8 @@ float expectedRoll=0, expectedPitch=0, expectedYaw=0;
 MPU6050 imu;
 int16_t ax, ay, az;
 float gx, gy, gz, roll, pitch, yaw;
-PIDcontroller rollPID(10,0,1);
-PIDcontroller pitchPID(10,0,1);
+PIDcontroller rollPID(7,0,0.01);
+PIDcontroller pitchPID(7,0,0.01);
 PIDcontroller yawPID(0,0,0);
 SimpleKalmanFilter kf[5] = {
   SimpleKalmanFilter(2, 2, 1),

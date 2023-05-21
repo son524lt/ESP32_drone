@@ -8,7 +8,7 @@ private:
     uint8_t pin;
     Servo ESC;
 public:
-    int speed, threshold;
+    int speed, threshold=1000;
     BL_ESC(char pin_number, int threshold = 0);
     void Run();
     void setSpeed(int speed, bool run=false);
