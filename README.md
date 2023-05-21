@@ -10,4 +10,4 @@ A quadcopter project focused on maintaining balance using a PID controller.
 - ESP32 microcontroller
 - PlatformIO for development
 
-To view the code of the remote controller, go to [branch ESP32_RC](https://github.com/yourusername/yourrepository/tree/drone-branch).
+To view the code of the remote controller, go to [branch ESP32_RC](https://github.com/son524lt/ESP32_drone/tree/ESP32_RC).
