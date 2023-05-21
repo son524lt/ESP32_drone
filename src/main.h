@@ -18,7 +18,7 @@
 #define accelScale 16384.0
 #define gyroScale 130.0
 
-#define alpha 0.9
+#define alpha 0.98
 
 #endif
 
