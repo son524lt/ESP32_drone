@@ -4,9 +4,11 @@ A quadcopter project focused on maintaining balance using a PID controller.
 
 ## Requirements
 
+- 4 IR sensors
 - 4 ESCs (Electronic Speed Controllers)
 - 4 brushless motors
 - MPU6050 IMU (Inertial Measurement Unit)
+- PCA9685 PWM controller
 - ESP32 microcontroller
 - PlatformIO for development
 
