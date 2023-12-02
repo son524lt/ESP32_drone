@@ -9,16 +9,12 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <SPI.h>
 #include <motorController.hpp>
+#include <balancingController.hpp>
 
 #define accelScale 4096.0
 #define gyroScale 65.5
 
-// #define accelScale 16384.0
-// #define gyroScale 131.0
-
 #define SERVO_FREQ 200
-// #define MIN_SERVO_PULSE 85
-// #define MAX_SERVO_PULSE 529
 
 #define LF_TRIG_PWM 635
 #define RF_TRIG_PWM 655
@@ -27,7 +23,7 @@
 
 #define LF_MIN_PWM 675
 #define RF_MIN_PWM 915
-#define RB_MIN_PWM 777
+#define RB_MIN_PWM 785
 #define LB_MIN_PWM 867
 
 #define LF_MAX_PWM 1735
@@ -50,31 +46,16 @@
 #define RB_READ 35
 #define LB_READ 34
 
-// #define LF_SCALE 1
-// #define LF_KP 0.03
-// #define LF_KI 0.02
-// #define LF_KD 0.01
-
-// #define RF_SCALE 1
-// #define RF_KP 0.07
-// #define RF_KI 0.00007
-// #define RF_KD 1.5
-
-// #define RB_SCALE 1.2
-// #define RB_KP 0.007
-// #define RB_KI 0.000001
-// #define RB_KD 0.00002
-
-// #define LB_SCALE 1.2
-// #define LB_KP 0.05
-// #define LB_KI 0.000007
-// #define LB_KD 0.00014
-
 #define rollOffset -4.6
 #define pitchOffset 0
-#define kP 0
-#define kI 0
-#define kD 0
+
+#define roll_kP 0
+#define roll_kI 0
+#define roll_kD 0
+
+#define pitch_kP 0
+#define pitch_kI 0
+#define pitch_kD 0
 
 // Variables
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();

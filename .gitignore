@@ -4,3 +4,8 @@
 .vscode/launch.json
 .vscode/ipch
 .vscode/
+
+*.py
+*.txt
+*.jpg
+*.csv
