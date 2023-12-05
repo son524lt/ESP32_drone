@@ -10,7 +10,7 @@ private:
 public:
     long double output = 0;
     balancingController(float kP, float kI, float kD);
-    void calculateOutput(int value, int desiredValue);
+    void calculateOutput(double value, double desiredValue);
     void reset();
 };
 

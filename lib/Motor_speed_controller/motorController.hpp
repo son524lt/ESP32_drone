@@ -8,7 +8,7 @@ private:
     uint16_t initPWM, minPWM, maxPWM;
     Adafruit_PWMServoDriver *BLDC;
     bool pulledToHIGH();
-    long double nonIntMap(long double x, long double in_min, long double in_max, long double out_min, long double out_max);
+    double nonIntMap(double x, double in_min, double in_max, double out_min, double out_max);
 public:
     uint16_t pwmVal = 0;
     double motorSpeed = 0;
@@ -17,5 +17,5 @@ public:
     // void writeSpeed(double speed);
     void init();
     // void setPID(double kP, double kI, double kD, double scale);
-    void writePermillionage(long double permillionage);
+    void writePower(double power);
 };

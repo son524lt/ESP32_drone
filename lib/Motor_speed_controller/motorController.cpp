@@ -9,14 +9,14 @@ motorController::motorController(uint8_t sensorPin, uint8_t PWMchannel, uint16_t
     BLDC = PWMcontroller;
 }
 
-long double motorController::nonIntMap(long double x, long double in_min, long double in_max, long double out_min, long double out_max) {
-    const long double run = in_max - in_min;
+double motorController::nonIntMap(double x, double in_min, double in_max, double out_min, double out_max) {
+    const double run = in_max - in_min;
     if(run == 0){
         log_e("map(): Invalid input range, min == max");
         return -1;
     }
-    const long double rise = out_max - out_min;
-    const long double delta = x - in_min;
+    const double rise = out_max - out_min;
+    const double delta = x - in_min;
     return (delta * rise) / run + out_min;
 }
 
@@ -71,14 +71,14 @@ void motorController::init() {
 //     speedScale = scale;
 // }
 
-void motorController::writePermillionage(long double permillionage) {
-    if (permillionage == 0) {
+void motorController::writePower(double power) {
+    if (power == 0) {
         pwmVal = initPWM;
         BLDC->setPWM(outChan, 0, initPWM);
         return;
     }
-    if (permillionage < 0) permillionage = 0;
-    if (permillionage > 1e6) permillionage = 1e6;
-    pwmVal = nonIntMap(permillionage, 0, 1e6, minPWM, maxPWM);
+    if (power < 0) power = 0;
+    if (power > 1e4) power = 1e4;
+    pwmVal = nonIntMap(power, 0, 1e4, minPWM, maxPWM);
     BLDC->setPWM(outChan, 0, pwmVal);
 }

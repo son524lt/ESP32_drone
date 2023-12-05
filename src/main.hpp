@@ -10,6 +10,9 @@
 #include <SPI.h>
 #include <motorController.hpp>
 #include <balancingController.hpp>
+#include <BluetoothSerial.h>
+
+BluetoothSerial SerBT;
 
 #define accelScale 4096.0
 #define gyroScale 65.5
@@ -17,18 +20,18 @@
 #define SERVO_FREQ 200
 
 #define LF_TRIG_PWM 635
-#define RF_TRIG_PWM 655
+#define RF_TRIG_PWM 640
 #define RB_TRIG_PWM 625
 #define LB_TRIG_PWM 640
 
-#define LF_MIN_PWM 675
-#define RF_MIN_PWM 915
-#define RB_MIN_PWM 785
-#define LB_MIN_PWM 867
+#define LF_MIN_PWM 700
+#define RF_MIN_PWM 715
+#define RB_MIN_PWM 800
+#define LB_MIN_PWM 870
 
 #define LF_MAX_PWM 1735
 #define RF_MAX_PWM 1700
-#define RB_MAX_PWM 1235
+#define RB_MAX_PWM 1700
 #define LB_MAX_PWM 1745
 
 #define LF_CHANNEL 4
@@ -49,13 +52,17 @@
 #define rollOffset -4.6
 #define pitchOffset 0
 
-#define roll_kP 0
+#define roll_kP 70
 #define roll_kI 0
-#define roll_kD 0
+#define roll_kD 3
 
-#define pitch_kP 0
+#define pitch_kP 70
 #define pitch_kI 0
-#define pitch_kD 0
+#define pitch_kD 3
+
+#define yaw_kP 0
+#define yaw_kI 0
+#define yaw_kD 0
 
 // Variables
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
@@ -72,6 +79,18 @@ unsigned long timer;
 float KalmanAngleRoll=0, KalmanUncertaintyAngleRoll=2*2;
 float KalmanAnglePitch=0, KalmanUncertaintyAnglePitch=2*2;
 float Kalman1DOutput[]={0,0};
+
+motorController motor[4] = {
+  motorController(LF_READ, LF_CHANNEL, LF_TRIG_PWM, LF_MIN_PWM, LF_MAX_PWM, &pwm),
+  motorController(RF_READ, RF_CHANNEL, RF_TRIG_PWM, RF_MIN_PWM, RF_MAX_PWM, &pwm),
+  motorController(RB_READ, RB_CHANNEL, RB_TRIG_PWM, RB_MIN_PWM, RB_MAX_PWM, &pwm),
+  motorController(LB_READ, LB_CHANNEL, LB_TRIG_PWM, LB_MIN_PWM, LB_MAX_PWM, &pwm)
+};
+double motorPow[4] = {0, 0, 0, 0};
+
+balancingController pitchBalancer(pitch_kP, pitch_kI, pitch_kD);
+balancingController rollBalancer(roll_kP, roll_kI, roll_kD);
+balancingController yawBalancer();
 
 // Functions and Methods
 void task2(void *parameter);
@@ -150,9 +169,33 @@ void updateRollPitch() {
     pitch = KalmanAnglePitch-pitchOffset;
 }
 
-// This function is for debugging
+// Debugging functions
 void freeze() {
     while (1);
+}
+
+void debugLog(Stream &Seri) {
+    Seri.print(motor[LF].motorSpeed);
+    Seri.print("\t");
+    // Seri.print(motorPow[LF]);
+    // Seri.print("\t");
+    Seri.print(motor[RF].motorSpeed);
+    Seri.print("\t");
+    // Seri.print(motorPow[RF]);
+    // Seri.print("\t");
+    Seri.print(motor[RB].motorSpeed);
+    Seri.print("\t");
+    // Seri.print(motorPow[RB]);
+    // Seri.print("\t");
+    Seri.print(motor[LB].motorSpeed);
+    Seri.print("\t");
+    // Seri.print(motorPow[LB]);
+    // Seri.print("\t");
+    Seri.print(roll);
+    Seri.print("\t");
+    Seri.print(pitch);
+    Seri.print("\t");
+    Seri.println();
 }
 
 #endif
